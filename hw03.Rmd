@@ -1,0 +1,346 @@
+---
+author: Michael Raffanti
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                      message=FALSE, warning = FALSE,
+                      fig.height = 3,
+                      error = TRUE)
+library(tidyverse)
+library(lubridate)
+source("../../scripts/viridis.R")
+```
+
+## Homework Assignment 
+
+#### Due Friday, September 30, 2022, at 11:59 PM
+
+- Replace the text "YOUR NAME HERE" in the YAML section with your name.
+- Edit this file, answer the questions, knit, and submit your solutions by uploading the resulting HTML file to the course Canvas site.  Be sure to review your HTML and ensure that your solutions appear as you expect prior to submitting.
+- Post questions using Discord, visit the Learning Center, or attend office hours if you have questions.
+
+### Problems
+
+The following R chunk reads in the default exoplanet data,
+selects some variables, and changes some variable names.
+
+```{r read-planet-data}
+## Read in the csv file
+## Select some variables that we will work with and rename them
+## Note that the file begins with 124 meta-data lines that this code skips
+## The argument `comment = "#"` fails as the symbol '#' appears in some of the websites included in the data set which are then interpreted as comments, preventing the full case to be read in as data
+
+## The warning arises because two cases include times in a variable which expects a date without a time
+## We subsequently do not select these variables, so it does not matter.
+
+planets = read_csv("../../data/exoplanet-confirmed_2022-09-12.csv",
+                   skip = 124) %>%
+  select(pl_name, hostname, discoverymethod,
+         disc_year, sy_pnum, pl_rade, pl_bmasse) %>%
+  rename(planet = pl_name,
+         star = hostname,
+         method = discoverymethod,
+         year = disc_year,
+         number = sy_pnum,
+         radius = pl_rade,
+         mass = pl_bmasse) 
+```
+
+
+
+### 1 
+
+Using the exoplanet data table `planets`:
+
+- filter so that you only use planets discovered by the radial velocity method;
+- remove cases where either of the variables `year` or `mass` (or both) are missing;
+- for this subset of planets, create a table with a data summary with the number of planets discovered and the minimum mass of these planets by year
+
+Then, make a scatterplot of the data such that:
+
+- the size of points are proportional to the number of planets discovered that year
+- the y-axis is on the log10 scale *(hint:  consider `scale_y_continuous()` or `scale_y_log10()`)*
+- the axes have descriptive labels, and
+- the plot contains an informative title.
+
+Note, a scatter plot where the size of the points is proportional to a numerical variable is called a *bubble plot*.
+
+In addition to creating the graphic, respond to the question below the R chunk.
+
+```{r}
+### Add your code here
+```
+
+**Describe the pattern between year and minimum mass of planet discovered using Radial Velocity.**
+
+> [Type your answer here]
+
+
+
+### 2 
+
+Using the `planets` data set created at the beginning of the assignment, determine which methods have been used to discover fewer than 50 planets each. For this and the next problem, create a subset of the data by:
+
+- removing the planets discovered by those methods (with fewer than 50 exoplanet  discoveries)
+    - *(Hint: create a vector with the names of the methods used at least 50 times and then use the `%in%` operator as part of the filter to keep only these cases.)*
+- summarize *for each year*, the number of planets and the proportion of planets discovered by each method.
+  - proportions should sum to one within each year.
+- arrange the rows by year in chronological order (earliest first)
+
+This data summary should have one row for each year and method (if the method was used in that year) and columns with the names `year`, `method`, `n`, and `proportion`.
+*(Hint: you may find it helpful to create a `total` column with the total number of exoplanets discovered each year repeated for each row to help calculate the proportion.)*
+
+```{r}
+### Add your code here
+```
+
+#### 2A 
+
+Report the dimensions of this data summary. Print the first 10 rows and all columns.
+
+> [Type your answer here]
+
+```{r}
+### Add your code here
+```
+
+
+#### 2B
+
+Using the data summary, create and display a bar plot with the year on the x axis and the proportion of discovered planets on the y axis.  Let each year have a single bar that extends from a proportion of 0 to 1, with sections of each bar filled with a color by method
+Add appropriate axis labels and plot title.
+
+```{r}
+### Add your code here
+```
+
+
+
+
+#### 2C
+
+Which method was most successful with the earliest discoveries of exoplanets, and which method has supplanted that method in relative popularity in recent years?
+
+> [Type your answer here]
+
+
+
+
+### 3 
+
+Begin with the data summary from the previous problem.
+
+- filter to only include years from 2010 -- 2020 (include the endpoints of the range), and
+- remove the rows corresponding to the "Transit" or "Radial Velocity" methods.
+
+Using this modified data set, create a plot which:
+
+- displays the *counts* of exoplanets discovered by method with a bar graph with year on the x axis, different fill colors for each method,
+and the *counts* of the number of planets for each year and method on the y axis using the function `geom_col()`.
+- does not stack the bars for each year, but rather display them next to each other in a clump by each year label.
+(*Note: The default is to stack bars. Use the argument `position = position_dodge2(preserve = "single")` inside of `geom_col()` to avoid stacking and to preserve the same bar width when the number of methods present changes by year.*)
+- adjusts the x-axis so a tick mark and label appears for each year (i.e., 2010, 2011, ...2020).  **(Hint: consider `scale_x_continuous`.)**
+- uses appropriate axis labels and plot title.
+
+```{r}
+## Add your code here
+```
+
+
+
+### 4
+
+A small number of planets have both an estimated mass AND an estimated radius less than those of the Earth.  What are the names of these planets, what method(s) were used to detect them, and in what year were they discovered?
+
+- Create a data summary table with the star name, planet name, method, year, mass, and radius of the planets that have **both** an estimated mass < 1 Earth mass and an estimated radius < 1 Earth radius.  
+- Order the rows increasing by mass.
+- Print the entire table.
+
+```{r}
+## Add your code here
+```
+
+
+### 5
+
+```{r, include = FALSE}
+official = read_csv("../../data/madison-weather-official-1869-2021.csv")
+```
+
+Use the official Madison weather data. Find:
+
+#### 5A
+
+- The dates with the five highest recorded maximum temperatures (there could be more than five dates due to ties)
+
+```{r}
+## Add your code here
+```
+
+
+
+#### 5B
+
+- The proportion of all days by month with precipitation (`prcp > 0`).
+
+```{r}
+## Add your code here
+```
+
+
+
+#### 5C
+
+- The average temperature (mean of `tavg`) by month for the years from 1991-2020 and the average temperature by month in 2021. In how many months was the average temperature in 2021 higher than the average in that month over the previous 30 years?
+
+```{r}
+## Add your code here
+```
+
+> [Type your answer here]
+
+
+#### 5D
+
+- The ten years with the highest average temperature on record in the past 153 years. How many of these years have occurred since 2000?
+
+```{r}
+## Add your code here
+```
+
+
+### 6
+
+Begin with the official Madison weather data (`madison-weather-official-1869-2021.csv`).
+
+Remove cases where the precipitation or average temperature is missing.
+
+For this problem, add the following variables:
+
+- `any_prcp`, which has the value "No precipitation" when `prcp` equals zero and "Some precipitation" when `prcp` is greater than zero
+- `month`, using the **lubridate** function `month()`
+- `year`, using the **lubridate** function `year()`
+- `period30`, which categorizes the year into a 30-year time period using the ranges 1841-1870, 1871-1900,
+1901-1930, 1931-1960, 1961-1990, 1991-2020, and 2021-2050.
+(The first and last of these categories will have only one or two years of data in them.)
+
+#### 6A
+
+Create a summary table which calculates the mean temperature and the total number of days
+for each month, period, and precipitation category, 
+after removing the periods with fewer than 30 years (the first and last of them).
+This table should have $12 \times 5 \times 2 = 120$ rows and columns for `month`, `period30`, `any_prcp`, and whichever names you used for the mean temperature and the counts of days.
+
+Add to this summary table a variable `prcp_p` which calculates the proportion of days within a month and period in each precipitation category.
+These proportions should sum to one within the pair of rows for each month/period combination.
+
+Print the first 20 rows and all columns of this data summary
+
+```{r}
+## add code here
+```
+
+
+#### 6B
+
+Display this summary data with a scatter plot (the y axis is categorical, but still plot points) of with the average temperature on the x-axis versus 30-year period on the y-axis with a different facet for each month.
+Color the points based on their value of `any_prcp`.
+Use the size of the point to indicate the proportion of days in that precipitation category.
+Add clear axis labels and a descriptive title.
+
+You can modify legend labels with `guides()` as shown in previous class notes to select more meaningful legend titles.
+
+```{r, fig.height = 8}
+## add code here
+```
+
+
+
+#### 6C
+
+Examine the plot and use features of the data shown in the plot to support your responses to these questions.
+
+- In general, are days with precipitation warmer, cooler, or about the same temperature as days without precipitation?
+
+> [Type your answer here]
+
+
+#### 6D
+
+- In general, is the frequency of days with precipitation increasing, decreasing, or staying about the same?
+
+> [Type your answer here]
+
+
+
+## Optional Problem
+
+The following problem is optional. If you do it, you may earn up to an extra 5 points for this assignment.
+If you do not do it, you may still earn the maximum 30 points for the assignment.
+
+### 7
+
+Use the official Madison weather data.
+
+Wisconsin is notorious for having very short springs:
+we may have snow on the ground and low temperatures below freezing late into the spring followed shortly after by high temperatures at 90 degrees or more.
+
+In 2022 (earlier this year), the time from the last low temperature below freezing (32 degrees Fahrenheit) to the first high temperature at 90 degrees or higher seemed remarkably short: the low temperature on April 27, 2022 was 27 degrees and the high temperature just 13 days later on May 10, 2022, was 90 degrees. Has there ever been such a quick temperature change in Madison in the past?
+
+#### 7A
+
+Using the official Madison weather data, eliminate any rows with missing temperature data. Then, create a summary table with one row per year with the following columns:
+
+- `last_sub32` --- the latest date in the first half of the year (before July 1) of a given year where the low temperature was below 32 degrees Fahrenheit
+- `tmin` --- the low temperature on that date
+- `first_90plus` which is the earliest date where the high temperature was 90 degrees or higher
+- `tmax` --- the high temperature on that date
+- `diff` which is the number of days between these two events
+
+*(Hint: a good strategy is to create separate tables for the last freeze and the first 90 degree day and then join them. In addition, use `as.numeric()` to convert the difference in dates from the `difftime` type to a `numeric` type.)*
+
+- Arrange the table in increasing order of `diff`.
+
+- Use `slice_min()` to print the top ten (including possible ties) for the shortest number of days from below freezing to 90 or above.
+
+```{r}
+## add code here
+```
+
+
+#### 7B
+
+- Create a scatter plot which has year on the x axis and `diff` on the y axis.
+  - add a red dashed horizontal line with a y-intercept of 13
+  - add a smooth trend line to the plotted points
+  - add informative axis labels and a plot title
+
+```{r}
+## add code here
+```
+
+
+
+#### 7C
+
+Examine the plot and then answer the following questions.
+You may wish to do some additional calculation.
+
+- Were there any years where the high temperature never reached 90 degrees or higher for the entire year? If so, indicate in which years this occurred.
+
+> [Type your answer here]
+
+
+- Were there any occurrences where there was a day with a low temperature below freezing (below 32 degrees Fahrenheit) **after** the first day that the high temperature was 90 degrees or higher? If so, indicate in which years this occurred.
+
+> [Type your answer here]
+
+
+
+- Did 2022 set a record for the shortest time from the last day with a low temperature below freezing to the first day with a high temperature of 90 degrees or more?
+
+> [Type your answer here]
+
+
